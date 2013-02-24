@@ -5,9 +5,9 @@ module Sinatra
 
     # routes method adds route specific javascript files (without .js extension)
     # to @js
-    def js (*scripts)
+    def scripts (*js)
       @js ||= []
-      @js << scripts
+      @js << js
     end
 
     # view method transforms all javascript filenames global to app 
@@ -30,9 +30,8 @@ module Sinatra
       global_scripts = settings.javascripts if settings.respond_to?('javascripts')
       global_scripts ||= {}
 
-      if settings.respond_to?('local_javascript_path')
-        local_path = settings.local_javascript_path
-        binding.pry
+      if settings.respond_to?('local_javascripts_path')
+        local_path = settings.local_javascripts_path
       end
       local_path ||= '/'
       

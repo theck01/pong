@@ -1,28 +1,28 @@
 require 'sinatra/base'
 
 module Sinatra
-  module CSS
+  module Styles
 
-    # routes method adds route specific css stylesheet filenames to @css
-    def css (*stylesheets)
-      @css ||= []
-      @css << stylesheets
+    # routes method adds route specific css stylesheet filenames to @styles
+    def styles (*stylesheets)
+      @styles ||= []
+      @styles << stylesheets.map{ |s| s.to_s }
     end
 
     # view method transforms all css filenames global to app (from settings.css)
     # and local to route (@js) into valid html
     def stylesheets
       sheets = []
-      sheets << settings.css.keys if settings.css
-      sheets << @css if @css
+      sheets << settings.stylesheets.keys if settings.respond_to?('stylesheets')
+      sheets << @styles if @styles
       sheets.flatten.uniq.map do |css|
-        "<link href='#{path_to_css css.to_s}' rel='stylesheet' type='text/css'>"
+        "<link href='#{path_to_styles css }' rel='stylesheet' type='text/css'>"
       end.join
     end
 
     protected
 
-    def path_to_css (stylesheet)
+    def path_to_styles (stylesheet)
       
       global_sheets = settings.stylesheets if settings.respond_to?('stylesheets')
       global_sheets ||= {}
@@ -36,6 +36,5 @@ module Sinatra
       path ||=  local_path + stylesheet + '.css'
     end
   end
-
-  helpers CSS
+  helpers Styles
 end
