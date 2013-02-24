@@ -4,8 +4,6 @@ javascripts:
   jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'
 local_javascripts_path: '/assets/javascripts/'
 
-css:
-  fonts: 'https://fonts.googleapis.com/css?family=Roboto:300,400,700'
 local_stylesheet_path: '/assets/stylesheets/'
 
 
