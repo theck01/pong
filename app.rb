@@ -10,8 +10,8 @@ config_file 'config.yml'
 # ROUTES
 
 get '/' do
-  styles :menu, :main
-  scripts :menu
-  @layout = { menu: :main }
-  haml :menu
+  styles :application, :menus
+  scripts :application, :pong
+  @layout = { menu: 'menus/main' }
+  haml :main_page
 end
