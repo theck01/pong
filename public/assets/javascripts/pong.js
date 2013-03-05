@@ -2,14 +2,15 @@
 function PongPaddle (x, y, controllable, player_one) {
 
   // PongPaddle CONSTANTS
-  this.Y_VELOCITY = 3; // normalized pixels per frame
-  this.WIDTH = 3; // normalized pixels
+  this.Y_VELOCITY = 1; // normalized pixels per frame
+  this.WIDTH = 2; // normalized pixels
   this.HEIGHT = 10; // normalized pixels
 
   // PongPaddle PROPERTIES
   this.x = x; // x position of the center of the paddle
   this.y = y; // y position of the center of the paddle
-  this.controllabe = controllable; // boolean, is the paddle player controllable?
+  this.controllabe = controllable; // boolean, is the paddle player 
+                                   // controllable?
   this.player_one = player_one; // boolean, does the paddle represent player one
 
   // PongPaddle METHODS
@@ -44,10 +45,10 @@ function PongPaddle (x, y, controllable, player_one) {
   /* draws the paddle on the screen with the given drawing context and modifiers
    * for x and y sizing */
   this.draw = function (context, xmod, ymod) {
-    x = Math.round((this.x - (this.WIDTH/2)) * xmod);
-    y = Math.round((this.y - (this.HEIGHT/2)) * ymod);
-    w = Math.round(this.WIDTH * xmod);
-    h = Math.round(this.HEIGHT * ymod);
+    var x = Math.round((this.x - (this.WIDTH/2)) * xmod);
+    var y = Math.round((this.y - (this.HEIGHT/2)) * ymod);
+    var w = Math.round(this.WIDTH * xmod);
+    var h = Math.round(this.HEIGHT * ymod);
     context.fillRect(x, y, w, h);
   };
 };
@@ -56,20 +57,38 @@ function PongPaddle (x, y, controllable, player_one) {
 function PongBall (x, y) {
 
   // PongBall CONSTANTS
-  this.SIZE = 3; // normalized pixels (side width)
-  this.DEFAULT_VELOCITY = 3; // normalized pixels per frame
+  this.SIZE = 2; // normalized pixels (side width)
+  this.DEFAULT_VELOCITY = 1; // normalized pixels per frame
+  this.MAX_VELOCITY = 3;
 
   // PongBall PROPERTIES
-  this.x_velocity = 3; // normalized pixels per frame
-  this.y_velocity = 3; // normalized pixels per frame
+  this.x_velocity = 1; // normalized pixels per frame
+  this.y_velocity = Math.random()*this.DEFAULT_VELOCITY*2 - 
+                    this.DEFAULT_VELOCITY; // normalized pixels per frame
   this.x = x; // normalized pixels
   this.y = y; // normalized pixels
   this.x_collision = false; // is ball mid-collision with an object in the x
                             // direction
   this.y_collision = false; // is ball mid-collision with an object in the y
                             // direction
-
+                            
   // PongBall METHODS
+
+  this.getX = function () {
+    return this.x;
+  };
+
+  this.getY = function () {
+    return this.y;
+  };
+
+  this.getXVelocity = function () {
+    return this.x_velocity;
+  }
+
+  this.getYVelocity = function () {
+    return this.y_velocity;
+  }
 
   /* move changes the ball position depending on collision state and velocity */
   this.move = function () {
@@ -83,23 +102,30 @@ function PongBall (x, y) {
   /* collides changes velocities and collision states depending on the current
    * ball velocities and collision direciton */
   this.collides = function (direction, smod) {
-    if (direction == "top" && this.y_velocity < 0)
+    if (direction == "top" && this.y_velocity < 0){
       this.y_collision = true;
-    else if (direction == "bottom" && this.y_velocity > 0)
+      this.y_velocity = -this.y_velocity;
+    }
+    else if (direction == "bottom" && this.y_velocity > 0){
       this.y_collision = true;
+      this.y_velocity = -this.y_velocity;
+    }
     else if (direction == "left" && this.x_velocity < 0) {
       this.x_collision = true;
-      if (Math.abs(this.y_velocity+smod) < this.MAX_SPEED)
+      this.x_velocity = - this.x_velocity;
+      if (Math.abs(this.y_velocity+smod) < this.MAX_VELOCITY)
         this.y_velocity += smod;
     }
     else if (direction == "right" && this.x_velocity > 0) {
       this.x_collision = true;
-      if (Math.abs(this.y_velocity+smod) < this.MAX_SPEED)
+      this.x_velocity = - this.x_velocity;
+      if (Math.abs(this.y_velocity+smod) < this.MAX_VELOCITY)
         this.y_velocity += smod;
     }
   };
 
-  /* reset moves ball to the given position with x velocity in the given direction */
+  /* reset moves ball to the given position with x velocity in the given 
+   * direction */
   this.reset = function (x, y, x_direction) {
 
     this.x = x;
@@ -112,17 +138,19 @@ function PongBall (x, y) {
       else this.x_velocity = this.DEFAULT_VELOCITY;
     }
 
-    // give the ball some arbitrary y velocity between 0 and this.DEFAULT_VELOCITY
-    this.y_velocity = Math.round(Math.random()*this.DEFAULT_VELOCITY);
+    /* give the ball some arbitrary y velocity between 0 and 
+     * this.DEFAULT_VELOCITY */
+    this.y_velocity = Math.random()*this.DEFAULT_VELOCITY*2 - 
+                      this.DEFAULT_VELOCITY;
   };
 
   /* draws the ball on the screen with the given drawing context and modifiers
    * for x and y sizing */
   this.draw = function (context, xmod, ymod) {
-    x = Math.round((this.x - (this.SIZE/2)) * xmod);
-    y = Math.round((this.y - (this.SIZE/2)) * ymod);
-    w = Math.round(this.SIZE * xmod);
-    h = Math.round(this.SIZE * ymod);
+    var x = Math.round((this.x - (this.SIZE/2)) * xmod);
+    var y = Math.round((this.y - (this.SIZE/2)) * ymod);
+    var w = Math.round(this.SIZE * xmod);
+    var h = Math.round(this.SIZE * ymod);
     context.fillRect(x, y, w, h);
   };
 };
@@ -144,8 +172,7 @@ function BoundingRange (min,max) {
 };
 
 
-function Game (players, context) {
-
+function Game (players) {
 
   // Game PROPERTIES
   this.ball = new PongBall(50, 50);
@@ -163,24 +190,22 @@ function Game (players, context) {
     this.right_paddle = new PongPaddle(89,50,true,false);
   }
 
-  this.left_gutter = BoundingRange(0,9);
-  this.right_gutter = BoundingRange(90,99);
-  this.top_wall = BoundingRange(0,9);
-  this.bottom_wall = BoundingRange(90,99);
-  this.left_collision = BoundingRange(10,10+Math.abs(this.ball.x_velocity));
-  this.right_collision = BoundingRange(89-Math.abs(this.ball.x_velocity),89);
-
-  this.context = context; // drawing context for the canvas
+  this.left_gutter = new BoundingRange(-9,0);
+  this.right_gutter = new BoundingRange(99,109);
+  this.top_wall = new BoundingRange(-9,0);
+  this.bottom_wall = new BoundingRange(99,109);
+  this.left_collision = new BoundingRange(10,10+Math.abs(this.ball.getXVelocity()+1));
+  this.right_collision = new BoundingRange(89-Math.abs(this.ball.getXVelocity()+1),89);
 
   // GAME METHODS
 
-  this.draw = function () {
+  this.draw = function (context) {
     var xmod = $(window).width()/100;
     var ymod = $(window).height()/100;
 
-    this.ball.draw(this.context, xmod, ymod);
-    this.left_paddle.draw(this.context, xmod, ymod);
-    this.right_paddle.draw(this.context, xmod, ymod);
+    this.ball.draw(context, 1, 1);
+    this.left_paddle.draw(context, 1, 1);
+    this.right_paddle.draw(context, 1, 1);
   };
 
   this.step = function () {
@@ -188,46 +213,53 @@ function Game (players, context) {
     // COLLISION DETECTION 
 
     // check for top and bottom collisions
-    if (this.top_wall.bounds(this.ball.y)) this.ball.collides("top",0);
-    else if (this.bottom_wall.bounds(this.ball.y)) 
+    if (this.top_wall.bounds(this.ball.getY())) this.ball.collides("top",0);
+    else if (this.bottom_wall.bounds(this.ball.getY())) 
       this.ball.collides("bottom",0);
 
     // check for left and right paddle collisions
-    if (this.left_collision.bounds(this.ball.x) && 
-       this.left_paddle.bounds(this.ball.y))
-      this.ball.collides("left", this.left_paddle.smod(this.ball.y));
-    else if (this.right_collision.bounds(this.ball.x) && 
-       this.right_paddle.bounds(this.ball.y))
-      this.ball.collides("right", this.right_paddle.smod(this.ball.y));
+    if (this.left_collision.bounds(this.ball.getX()) && 
+       this.left_paddle.bounds(this.ball.getY())){
+      this.ball.collides("left", this.left_paddle.smod(this.ball.getY()));
+    }
+    else if (this.right_collision.bounds(this.ball.getX()) && 
+       this.right_paddle.bounds(this.ball.getY())){
+      this.ball.collides("right", this.right_paddle.smod(this.ball.getY()));
+    }
 
     // check for passed balls (ADD POINT SCORING)
-    if (this.left_gutter.bounds(this.ball.x)) this.ball.reset(50,50,"random");
-    else if (this.right_gutter.bounds(this.ball.x)) 
+    if (this.left_gutter.bounds(this.ball.getX())) this.ball.reset(50,50,"random");
+    else if (this.right_gutter.bounds(this.ball.getX())) 
       this.ball.reset(50,50,"random");
 
-
     // MOVEMENT
-    
     this.ball.move();
-    if (this.ball.x_velocity > 0) {
+    if (this.ball.getXVelocity() > 0) {
       this.left_paddle.move_to(50);
-      this.right_paddle.move_to(this.ball.y);
+      this.right_paddle.move_to(this.ball.getY());
     }
     else {
-      this.left_paddle.move_to(this.ball.y);
+      this.left_paddle.move_to(this.ball.getY());
       this.right_paddle.move_to(50);
     }
-
-    // DRAWING
-    
-    this.draw();
   };
 };
   
 
 
 $(function () {
-  var context = $('#canvas')[0].getContext('2d');
-  game = new Game (0,context);
-  game.draw();
+
+  var game = new Game (0);
+  var canvas = $('#canvas')[0];
+
+  setInterval(function () {
+
+    var width = canvas.width;
+    canvas.width = 0;
+    canvas.width = width;
+
+    var context = canvas.getContext('2d');
+    game.draw(context);
+    game.step();
+  }, 16);
 });

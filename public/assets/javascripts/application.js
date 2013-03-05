@@ -21,6 +21,10 @@ function maximizeDiv(div_id){
 
   div.width($(window).width());
   div.height($(window).height());
+  div.css({
+    top: "0px",
+    left: "0px",
+  });
 }
 
 $(function () {
