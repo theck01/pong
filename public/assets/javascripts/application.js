@@ -28,12 +28,12 @@ function maximizeDiv(div_id){
 }
 
 $(function () {
-  maximizeDiv('#canvas');
+  maximizeDiv('#pong_table');
   centerDiv('#menu');
 });
 
 $(window).resize(function (event) {
-  maximizeDiv('#canvas');
+  maximizeDiv('#pong_table');
   centerDiv('#menu');
 });
 

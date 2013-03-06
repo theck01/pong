@@ -49,11 +49,11 @@ function PongPaddle (x, y, ymin, ymax, controllable, player_one) {
 
   /* draws the paddle on the screen with the given drawing context and modifiers
    * for x and y sizing */
-  this.draw = function (context, xmod, ymod) {
-    var x = Math.round((this.x - (this.WIDTH/2)) * xmod);
-    var y = Math.round((this.y - (this.HEIGHT/2)) * ymod);
-    var w = Math.round(this.WIDTH * xmod);
-    var h = Math.round(this.HEIGHT * ymod);
+  this.draw = function (context, xoff, yoff, mod) {
+    var x = Math.round((this.x - (this.WIDTH/2))*mod + xoff);
+    var y = Math.round((this.y - (this.HEIGHT/2))*mod + yoff);
+    var w = Math.round(this.WIDTH * mod);
+    var h = Math.round(this.HEIGHT * mod);
     context.fillRect(x, y, w, h);
   };
 };
@@ -152,11 +152,11 @@ function PongBall (x, y) {
 
   /* draws the ball on the screen with the given drawing context and modifiers
    * for x and y sizing */
-  this.draw = function (context, xmod, ymod) {
-    var x = Math.round((this.x - (this.SIZE/2)) * xmod);
-    var y = Math.round((this.y - (this.SIZE/2)) * ymod);
-    var w = Math.round(this.SIZE * xmod);
-    var h = Math.round(this.SIZE * ymod);
+  this.draw = function (context, xoff, yoff, mod) {
+    var x = Math.round((this.x - (this.SIZE/2)) * mod + xoff);
+    var y = Math.round((this.y - (this.SIZE/2)) * mod + yoff);
+    var w = Math.round(this.SIZE * mod);
+    var h = Math.round(this.SIZE * mod);
     context.fillRect(x, y, w, h);
   };
 };
@@ -205,18 +205,31 @@ function Game (players) {
 
   // GAME METHODS
 
-  this.draw = function (context) {
-    var xmod = $(window).width()/200;
-    var ymod = $(window).height()/100;
-
-    this.ball.draw(context, 1, 1);
-    this.left_paddle.draw(context, 1, 1);
-    this.right_paddle.draw(context, 1, 1);
+  this.draw = function (width, height, context) {
     
-    context.moveTo(-0.5,-0.5);
-    context.lineTo(200.5,-0.5);
-    context.moveTo(-0.5,100.5);
-    context.lineTo(200.5,100.5);
+    var xoff = 0;
+    var yoff = 0;
+    var mod = 0;
+    
+    if(width > 2*height){
+      yoff = 0;
+      xoff = width - 2*height;
+      mod = height/100;
+    }
+    else{
+      xoff = 0;
+      yoff = height - width/2;
+      mod = width/200;
+    }
+
+    this.ball.draw(context, xoff, yoff, mod);
+    this.left_paddle.draw(context, xoff, yoff, mod);
+    this.right_paddle.draw(context, xoff, yoff, mod);
+    
+    context.moveTo(0.5+xoff,0.5+yoff);
+    context.lineTo(200.5*mod+xoff,0.5+yoff);
+    context.moveTo(0.5+xoff,100.5*mod+yoff);
+    context.lineTo(200.5*mod+xoff,100.5*mod+yoff);
     context.stroke();
   };
 
@@ -269,7 +282,7 @@ $(function () {
     canvas.width = width;
 
     var context = canvas.getContext('2d');
-    game.draw(context);
+    game.draw(canvas.width, canvas.height, context);
     game.step();
   }, 16);
 });
