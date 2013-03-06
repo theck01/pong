@@ -258,10 +258,9 @@ function Game (players) {
 };
   
 
-
 $(function () {
   var game = new Game (0);
-  var canvas = $('#canvas')[0];
+  var canvas = $('#pong_table')[0];
 
   setInterval(function () {
 
