@@ -198,7 +198,7 @@ function Game (players) {
 
   this.left_gutter = new BoundingRange(-9,0);
   this.right_gutter = new BoundingRange(199,209);
-  this.top_wall = new BoundingRange(-9,0);
+  this.top_wall = new BoundingRange(-9,1);
   this.bottom_wall = new BoundingRange(99,109);
   this.left_collision = new BoundingRange(20,20+Math.abs(this.ball.getXVelocity()+1));
   this.right_collision = new BoundingRange(179-Math.abs(this.ball.getXVelocity()+1),179);
@@ -213,12 +213,12 @@ function Game (players) {
     
     if(width > 2*height){
       yoff = 0;
-      xoff = width - 2*height;
+      xoff = (width - 2*height)/2;
       mod = height/100;
     }
     else{
       xoff = 0;
-      yoff = height - width/2;
+      yoff = (height - width/2)/2;
       mod = width/200;
     }
 
@@ -279,7 +279,8 @@ $(function () {
 
     var width = canvas.width;
     canvas.width = 0;
-    canvas.width = width;
+    canvas.width = $(window).width();
+    canvas.height = $(window).height();
 
     var context = canvas.getContext('2d');
     game.draw(canvas.width, canvas.height, context);
