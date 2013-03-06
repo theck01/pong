@@ -2,7 +2,7 @@
 function PongPaddle (x, y, ymin, ymax, controllable, player_one) {
 
   // PongPaddle CONSTANTS
-  this.Y_VELOCITY = 0.8; // normalized pixels per frame
+  this.Y_VELOCITY = 1; // normalized pixels per frame
   this.WIDTH = 2; // normalized pixels
   this.HEIGHT = 10; // normalized pixels
 
@@ -50,10 +50,10 @@ function PongPaddle (x, y, ymin, ymax, controllable, player_one) {
   /* draws the paddle on the screen with the given drawing context and modifiers
    * for x and y sizing */
   this.draw = function (context, xoff, yoff, mod) {
-    var x = Math.round((this.x - (this.WIDTH/2))*mod + xoff);
-    var y = Math.round((this.y - (this.HEIGHT/2))*mod + yoff);
-    var w = Math.round(this.WIDTH * mod);
-    var h = Math.round(this.HEIGHT * mod);
+    var x = (this.x - (this.WIDTH/2))*mod + xoff;
+    var y = (this.y - (this.HEIGHT/2))*mod + yoff;
+    var w = this.WIDTH * mod;
+    var h = this.HEIGHT * mod;
     context.fillRect(x, y, w, h);
   };
 };
@@ -63,9 +63,9 @@ function PongBall (x, y) {
 
   // PongBall CONSTANTS
   this.SIZE = 2; // normalized pixels (side width)
-  this.DEFAULT_X_VELOCITY = 1.5; // normalized pixels per frame
-  this.DEFAULT_Y_VELOCITY = 1; // normalized pixels per frame
-  this.MAX_VELOCITY = 2;
+  this.DEFAULT_X_VELOCITY = 2; // normalized pixels per frame
+  this.DEFAULT_Y_VELOCITY = 1.5; // normalized pixels per frame
+  this.MAX_VELOCITY = 3;
 
   // PongBall PROPERTIES
   this.x_velocity = this.DEFAULT_X_VELOCITY; // normalized pixels per frame
@@ -153,10 +153,10 @@ function PongBall (x, y) {
   /* draws the ball on the screen with the given drawing context and modifiers
    * for x and y sizing */
   this.draw = function (context, xoff, yoff, mod) {
-    var x = Math.round((this.x - (this.SIZE/2)) * mod + xoff);
-    var y = Math.round((this.y - (this.SIZE/2)) * mod + yoff);
-    var w = Math.round(this.SIZE * mod);
-    var h = Math.round(this.SIZE * mod);
+    var x = (this.x - (this.SIZE/2)) * mod + xoff;
+    var y = (this.y - (this.SIZE/2)) * mod + yoff;
+    var w = this.SIZE * mod;
+    var h = this.SIZE * mod;
     context.fillRect(x, y, w, h);
   };
 };
@@ -285,5 +285,5 @@ $(function () {
     var context = canvas.getContext('2d');
     game.draw(canvas.width, canvas.height, context);
     game.step();
-  }, 16);
+  }, 10);
 });
