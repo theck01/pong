@@ -5,8 +5,7 @@ function PongPaddle (x, y, ymin, ymax, controllable, player_one) {
   this.Y_VELOCITY = 1; // normalized pixels per frame
   this.WIDTH = 2; // normalized pixels
   this.HEIGHT = 10; // normalized pixels
-
-  // PongPaddle PROPERTIES
+// PongPaddle PROPERTIES
   this.x = x; // x position of the center of the paddle
   this.y = y; // y position of the center of the paddle
   this.ymin = ymin;
@@ -19,13 +18,12 @@ function PongPaddle (x, y, ymin, ymax, controllable, player_one) {
 
   /* sets the position of the object to be nearer to y on the y  axis */
   this.move_to = function (y) {
-    if (this.y < y) {
-      if ((y - this.y) > this.Y_VELOCITY)
-        this.y += this.Y_VELOCITY;
-      else this.y = y;
+    if(this.y < y){
+      if((y - this.y) > this.Y_VELOCITY)
+        this.y += this.Y_VELOCITY; else this.y = y;
     }
-    else {
-      if ((this.y - y) > this.Y_VELOCITY)
+    else{
+      if((this.y - y) > this.Y_VELOCITY)
         this.y -= this.Y_VELOCITY;
       else this.y = y;
     }
@@ -37,7 +35,7 @@ function PongPaddle (x, y, ymin, ymax, controllable, player_one) {
   /* returns true if the y cordinate is within the bounds of the paddle, false 
    * if not */
   this.bounds = function (y) {
-    if (y < (this.y + this.HEIGHT/2) && y > (this.y - this.HEIGHT/2))
+    if(y < (this.y + this.HEIGHT/2) && y > (this.y - this.HEIGHT/2))
       return true;
     return false;
   };
@@ -98,34 +96,34 @@ function PongBall (x, y) {
 
   /* move changes the ball position depending on collision state and velocity */
   this.move = function () {
-    if (this.x_collision) this.x_collision = false;
+    if(this.x_collision) this.x_collision = false;
     else this.x += this.x_velocity;
 
-    if (this.y_collision) this.y_collision = false;
+    if(this.y_collision) this.y_collision = false;
     else this.y += this.y_velocity;
   };
 
   /* collides changes velocities and collision states depending on the current
    * ball velocities and collision direciton */
   this.collides = function (direction, smod) {
-    if (direction == "top" && this.y_velocity < 0){
+    if(direction == "top" && this.y_velocity < 0){
       this.y_collision = true;
       this.y_velocity = -this.y_velocity;
     }
-    else if (direction == "bottom" && this.y_velocity > 0){
+    else if(direction == "bottom" && this.y_velocity > 0){
       this.y_collision = true;
       this.y_velocity = -this.y_velocity;
     }
-    else if (direction == "left" && this.x_velocity < 0) {
+    else if(direction == "left" && this.x_velocity < 0){
       this.x_collision = true;
       this.x_velocity = - this.x_velocity;
-      if (Math.abs(this.y_velocity+smod) < this.MAX_VELOCITY)
+      if(Math.abs(this.y_velocity+smod) < this.MAX_VELOCITY)
         this.y_velocity += smod;
     }
-    else if (direction == "right" && this.x_velocity > 0) {
+    else if(direction == "right" && this.x_velocity > 0){
       this.x_collision = true;
       this.x_velocity = - this.x_velocity;
-      if (Math.abs(this.y_velocity+smod) < this.MAX_VELOCITY)
+      if(Math.abs(this.y_velocity+smod) < this.MAX_VELOCITY)
         this.y_velocity += smod;
     }
   };
@@ -137,10 +135,10 @@ function PongBall (x, y) {
     this.x = x;
     this.y = y;
 
-    if (x_direction == "left") this.x_velocity = -this.DEFAULT_X_VELOCITY;
-    else if (x_direction == "right") this.x_velocity = this.DEFAULT_X_VELOCITY;
-    else {
-      if ((Math.random() - 0.5) < 0) this.x_velocity = -this.DEFAULT_X_VELOCITY;
+    if(x_direction == "left") this.x_velocity = -this.DEFAULT_X_VELOCITY;
+    else if(x_direction == "right") this.x_velocity = this.DEFAULT_X_VELOCITY;
+    else{
+      if((Math.random() - 0.5) < 0) this.x_velocity = -this.DEFAULT_X_VELOCITY;
       else this.x_velocity = this.DEFAULT_X_VELOCITY;
     }
 
@@ -172,7 +170,7 @@ function BoundingRange (min,max) {
   
   /* bounds returns true if range bounds m, false if not */
   this.bounds = function (m) {
-    if (m < this.max && m > this.min) return true;
+    if(m < this.max && m > this.min) return true;
     return false;
   };
 };
@@ -181,17 +179,19 @@ function BoundingRange (min,max) {
 function Game (players) {
 
   // Game PROPERTIES
+  
+  this.players = players;
   this.ball = new PongBall(100, 50);
 
-  if (players == 0) {
+  if(players == 0){
     this.left_paddle = new PongPaddle(20,50,0,100,false,true);
     this.right_paddle = new PongPaddle(179,50,0,100,false,false);
   }
-  else if (players == 1) {
+  else if(players == 1){
     this.left_paddle = new PongPaddle(20,50,0,100,true,true);
     this.right_paddle = new PongPaddle(179,50,0,100,false,false);
   }
-  else {
+  else{
     this.left_paddle = new PongPaddle(20,50,0,100,true,true);
     this.right_paddle = new PongPaddle(179,50,0,100,true,false);
   }
@@ -233,47 +233,70 @@ function Game (players) {
     context.stroke();
   };
 
-  this.step = function () {
+  this.step = function (player1_move, player2_move) {
     
     // COLLISION DETECTION 
 
     // check for top and bottom collisions
-    if (this.top_wall.bounds(this.ball.getY())) this.ball.collides("top",0);
-    else if (this.bottom_wall.bounds(this.ball.getY())) 
+    if(this.top_wall.bounds(this.ball.getY())) this.ball.collides("top",0);
+    else if(this.bottom_wall.bounds(this.ball.getY())) 
       this.ball.collides("bottom",0);
 
     // check for left and right paddle collisions
-    if (this.left_collision.bounds(this.ball.getX()) && 
+    if(this.left_collision.bounds(this.ball.getX()) && 
        this.left_paddle.bounds(this.ball.getY())){
       this.ball.collides("left", this.left_paddle.smod(this.ball.getY()));
     }
-    else if (this.right_collision.bounds(this.ball.getX()) && 
+    else if(this.right_collision.bounds(this.ball.getX()) && 
        this.right_paddle.bounds(this.ball.getY())){
       this.ball.collides("right", this.right_paddle.smod(this.ball.getY()));
     }
 
     // check for passed balls (ADD POINT SCORING)
-    if (this.left_gutter.bounds(this.ball.getX())) this.ball.reset(100,50,"right");
-    else if (this.right_gutter.bounds(this.ball.getX())) 
-      this.ball.reset(100,50,"left");
+    if(this.left_gutter.bounds(this.ball.getX())) this.ball.reset(50,50,"right");
+    else if(this.right_gutter.bounds(this.ball.getX())) 
+      this.ball.reset(150,50,"left");
 
     // MOVEMENT
     this.ball.move();
-    if (this.ball.getXVelocity() > 0) {
-      this.left_paddle.move_to(50);
-      this.right_paddle.move_to(this.ball.getY());
+
+    if(this.players = 0){
+      if(this.ball.getXVelocity() > 0){
+        this.left_paddle.move_to(50);
+        this.right_paddle.move_to(this.ball.getY());
+      }
+      else{
+        this.left_paddle.move_to(this.ball.getY());
+        this.right_paddle.move_to(50);
+      }
     }
-    else {
-      this.left_paddle.move_to(this.ball.getY());
-      this.right_paddle.move_to(50);
+    else if(this.players == 1){
+      if(this.ball.getXVelocity() > 0){
+        this.right_paddle.move_to(this.ball.getY());
+      }
+      else{
+        this.right_paddle.move_to(50);
+      }
+
+      if(player1_move > 0) this.left_paddle.move_to(100);
+      else if(player1_move < 0) this.left_paddle.move_to(0);
+    }
+    else{
+      if(player1_move > 0) this.left_paddle.move_to(100);
+      else if(player1_move < 0) this.left_paddle.move_to(0);
+
+      if(player2_move > 0) this.right_paddle.move_to(100);
+      else if(player2_move < 0) this.right_paddle.move_to(0);
     }
   };
 };
   
 
 $(function () {
-  var game = new Game (0);
+  var game = new Game (2);
   var canvas = $('#pong_table')[0];
+  var player1_key = 0;
+  var player2_key = 0;
 
   setInterval(function () {
 
@@ -284,6 +307,46 @@ $(function () {
 
     var context = canvas.getContext('2d');
     game.draw(canvas.width, canvas.height, context);
-    game.step();
+    game.step(player1_key, player2_key);
+
+    /* clear processed key events */
   }, 10);
+
+  $(window).keydown(function (event) {
+    switch(event.which){
+      case 87:
+        player1_key = -1;
+        break;
+      case 83:
+        player1_key = 1;
+        break;
+      case 38:
+        player2_key = -1;
+        break;
+      case 40:
+        player2_key = 1;
+        break;
+      default:
+        break;
+    }
+  });
+
+  $(window).keyup(function (event) {
+    switch(event.which){
+      case 87:
+        player1_key = 0;
+        break;
+      case 83:
+        player1_key = 0;
+        break;
+      case 38:
+        player2_key = 0;
+        break;
+      case 40:
+        player2_key = 0;
+        break;
+      default:
+        break;
+    }
+  });
 });
