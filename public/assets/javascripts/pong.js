@@ -205,6 +205,7 @@ function Game (players) {
 
   // GAME METHODS
 
+  /* draw all objects in the game, main drawing routine */
   this.draw = function (width, height, context) {
     
     var xoff = 0;
@@ -233,6 +234,7 @@ function Game (players) {
     context.stroke();
   };
 
+  /* step through game functionallity, main game loop */
   this.step = function (player1_move, player2_move) {
     
     // COLLISION DETECTION 
@@ -260,7 +262,7 @@ function Game (players) {
     // MOVEMENT
     this.ball.move();
 
-    if(this.players = 0){
+    if(this.players == 0){
       if(this.ball.getXVelocity() > 0){
         this.left_paddle.move_to(50);
         this.right_paddle.move_to(this.ball.getY());
@@ -293,10 +295,12 @@ function Game (players) {
   
 
 $(function () {
-  var game = new Game (2);
+  console.log(num_players + ' players playing this game');
+  var game = new Game (window.num_players);
   var canvas = $('#pong_table')[0];
   var player1_key = 0;
   var player2_key = 0;
+
 
   setInterval(function () {
 
@@ -311,6 +315,7 @@ $(function () {
 
     /* clear processed key events */
   }, 10);
+
 
   $(window).keydown(function (event) {
     switch(event.which){
@@ -331,6 +336,7 @@ $(function () {
     }
   });
 
+    
   $(window).keyup(function (event) {
     switch(event.which){
       case 87:
