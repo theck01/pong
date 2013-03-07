@@ -32,3 +32,11 @@ get '/multi' do
   @num_players = 2
   haml :main_page
 end
+
+get '/howto' do
+  styles :application, :menus
+  scripts :application, :pong
+  @layout = { menu: 'menus/howto' }
+  @num_players = 0
+  haml :main_page
+end
