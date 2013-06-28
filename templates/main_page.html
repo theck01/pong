@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PONG</title>
+    {% for script in javascripts %}
+      <script type="text/javascript" src="{{ script }}"></script>
+    {% endfor %}
+    <script type="text/javascript">window.num_players = {{num_players}};</script>
+    {% for style in stylesheets %}
+      <link type="text/javascript" href="{{ style }}" rel=stylesheet>
+    {% endfor %}
+  </head>
+
+  <body>
+    <div id="container">
+      <canvas id="pong_table"></canvas>
+      <div id="menu" class="center">
+        {% if menu %}
+          {% include ("menus/" + menu) %}
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
